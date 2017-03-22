@@ -51,7 +51,7 @@
                       <li><a
                         href='#<%=member.namespace%>'
                         class='regular pre-open'>
-                        #<%- member.name %>
+                        #<%- member.name %><% if (member.access && member.access === 'private') { %><span class="h6 private-member"> private</span><% }%>
                       </a></li>
                       <% }) %>
                     </ul>

@@ -1,4 +1,4 @@
-<section class='p2 mb2 clearfix bg-white minishadow'>
+<section class='p2 no-mb2 clearfix bg-white minishadow'>
 
   <% if (typeof nested === 'undefined' || (section.context && section.context.github)) { %>
   <div class='clearfix'>
@@ -149,4 +149,20 @@
     <div class='py1 quiet mt1 prose-big'>Events</div>
     <%= renderSectionList({ members: section.members.events, renderSection: renderSection, noun: 'Event' }) %>
   <% } %>
+
+  <% if (typeof section.memberof === 'undefined'
+    && section.kind === 'function'
+    && typeof section.scope === 'undefined'
+    && typeof section.context.blockSource !== 'undefined') {%>
+  <div class="clearfix small pointer toggle-sibling small-font sourcecode">
+    <div class="py1 contain">
+      <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+      <span class='code truncate small-font'>Code</span>
+    </div>
+  </div>
+  <div class="clearfix display-none toggle-target" style="padding-left:2rem">
+    <pre class='p1 overflow-auto round fill-light'><%= highlight(section.context.blockSource) %></pre>
+  </div>
+  <% }%>
+
 </section>

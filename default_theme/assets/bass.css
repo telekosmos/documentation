@@ -7,6 +7,11 @@
 .h5{ font-size: .875rem }
 .h6{ font-size: .75rem }
 
+.small-font {
+  font-size: .70rem;
+}
+
+
 .font-family-inherit{ font-family:inherit }
 .font-size-inherit{ font-size:inherit }
 .text-decoration-none{ text-decoration:none }

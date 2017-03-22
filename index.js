@@ -20,6 +20,7 @@ var fs = require('fs'),
   inferReturn = require('./lib/infer/return'),
   inferAccess = require('./lib/infer/access'),
   inferType = require('./lib/infer/type'),
+  inferSourceCode = require('./lib/infer/sourcecode'),
   formatLint = require('./lib/lint').formatLint,
   garbageCollect = require('./lib/garbage_collect'),
   lintComments = require('./lib/lint').lintComments,
@@ -28,9 +29,9 @@ var fs = require('fs'),
 
 /**
  * Build a pipeline of comment handlers.
- * @param {...Function|null} args - Pipeline elements. Each is a function that accepts
- *  a comment and can return a comment or undefined (to drop that comment).
- * @returns {Function} pipeline
+ * @param {...Function|null} args - Pipeline elements. Each is a function <b>that accepts
+ *  a comment</b> and can return a comment or undefined (to drop that comment).
+ * @returns {Function} pipeline result
  * @private
  */
 function pipeline() {
@@ -92,33 +93,40 @@ function buildInternal(inputsAndConfig) {
   }
 
   var parseFn = (config.polyglot) ? polyglot : parseJavaScript;
-
-  var buildPipeline = pipeline(
-    inferName,
-    inferAccess(config.inferPrivate),
-    inferAugments,
-    inferKind,
-    inferParams,
-    inferProperties,
-    inferReturn,
-    inferMembership(),
-    inferType,
-    nest,
-    config.github && github,
-    garbageCollect);
-
+  var buildPipeline;
+  
   let extractedComments = _.flatMap(inputs, function (sourceFile) {
     if (!sourceFile.source) {
       sourceFile.source = fs.readFileSync(sourceFile.file, 'utf8');
     }
 
+    buildPipeline = pipeline(
+      inferName,
+      inferAccess(config.inferPrivate),
+      inferAugments,
+      inferKind,
+      inferParams,
+      inferProperties,
+      inferReturn,
+      inferMembership(),
+      inferType,
+      inferSourceCode(sourceFile.source, config.s), // config.s == source
+      nest,
+      config.github && github,
+      garbageCollect
+    );
+
+    let parsedFile = parseFn(sourceFile, config);
     return parseFn(sourceFile, config).map(buildPipeline);
   }).filter(Boolean);
+
+  // console.log(`extractedComments: ${extractedComments}`);
 
   return filterAccess(config.access,
     hierarchy(
       sort(extractedComments, config)));
 }
+
 
 function lintInternal(inputsAndConfig) {
   let inputs = inputsAndConfig.inputs;
