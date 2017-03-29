@@ -50,6 +50,7 @@ declare type CommentContext = {
   ast: Object,
   loc: CommentLoc,
   code: string,
+  blockSource?: string,
   github?: CommentContextGitHub
 };
 

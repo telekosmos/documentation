@@ -94,7 +94,6 @@ function buildInternal(inputsAndConfig) {
 
   var parseFn = (config.polyglot) ? polyglot : parseJavaScript;
   var buildPipeline;
-  
   let extractedComments = _.flatMap(inputs, function (sourceFile) {
     if (!sourceFile.source) {
       sourceFile.source = fs.readFileSync(sourceFile.file, 'utf8');
@@ -116,7 +115,6 @@ function buildInternal(inputsAndConfig) {
       garbageCollect
     );
 
-    let parsedFile = parseFn(sourceFile, config);
     return parseFn(sourceFile, config).map(buildPipeline);
   }).filter(Boolean);
 
