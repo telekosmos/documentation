@@ -50,6 +50,7 @@ declare type CommentContext = {
   ast: Object,
   loc: CommentLoc,
   code: string,
+  blockSource?: string,
   github?: CommentContextGitHub
 };
 
@@ -88,18 +89,19 @@ declare type Remark = {
 
 declare type Access = 'private' | 'public' | 'protected';
 declare type Scope = 'instance' | 'static' | 'inner' | 'global';
-declare type Kind = 'class' |
-  'constant' |
-  'event' |
-  'external' |
-  'file' |
-  'function' |
-  'member' |
-  'mixin' |
-  'module' |
-  'namespace' |
-  'typedef' |
-  'interface';
+declare type Kind =
+  | 'class'
+  | 'constant'
+  | 'event'
+  | 'external'
+  | 'file'
+  | 'function'
+  | 'member'
+  | 'mixin'
+  | 'module'
+  | 'namespace'
+  | 'typedef'
+  | 'interface';
 
 declare type Comment = {
   errors: Array<CommentError>,
@@ -152,4 +154,4 @@ declare type ReducedComment = {
   name: string,
   kind: ?Kind,
   scope?: ?Scope
-}
+};

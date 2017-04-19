@@ -20,6 +20,7 @@ var fs = require('fs'),
   inferReturn = require('./lib/infer/return'),
   inferAccess = require('./lib/infer/access'),
   inferType = require('./lib/infer/type'),
+  inferSourceCode = require('./lib/infer/sourcecode'),
   formatLint = require('./lib/lint').formatLint,
   garbageCollect = require('./lib/garbage_collect'),
   lintComments = require('./lib/lint').lintComments,
@@ -28,9 +29,9 @@ var fs = require('fs'),
 
 /**
  * Build a pipeline of comment handlers.
- * @param {...Function|null} args - Pipeline elements. Each is a function that accepts
- *  a comment and can return a comment or undefined (to drop that comment).
- * @returns {Function} pipeline
+ * @param {...Function|null} args - Pipeline elements. Each is a function <b>that accepts
+ *  a comment</b> and can return a comment or undefined (to drop that comment).
+ * @returns {Function} pipeline result
  * @private
  */
 function pipeline() {
@@ -45,13 +46,10 @@ function pipeline() {
   };
 }
 
-
-
-function configure(indexes, args)/*: Promise<InputsConfig> */ {
+function configure(indexes, args) /*: Promise<InputsConfig> */ {
   let mergedConfig = mergeConfig(args);
 
   return mergedConfig.then(config => {
-
     let expandedInputs = expandInputs(indexes, config);
 
     return expandedInputs.then(inputs => {
@@ -71,8 +69,10 @@ function configure(indexes, args)/*: Promise<InputsConfig> */ {
  * @param {Object} config options
  * @returns {Promise<Array<string>>} promise with results
  */
-function expandInputs(indexes/*: string|Array<string> */,
-  config /*: DocumentationConfig */) {
+function expandInputs(
+  indexes /*: string|Array<string> */,
+  config /*: DocumentationConfig */
+) {
   // Ensure that indexes is an array of strings
   indexes = [].concat(indexes);
 
@@ -91,40 +91,45 @@ function buildInternal(inputsAndConfig) {
     config.access = ['public', 'undefined', 'protected'];
   }
 
-  var parseFn = (config.polyglot) ? polyglot : parseJavaScript;
-
-  var buildPipeline = pipeline(
-    inferName,
-    inferAccess(config.inferPrivate),
-    inferAugments,
-    inferKind,
-    inferParams,
-    inferProperties,
-    inferReturn,
-    inferMembership(),
-    inferType,
-    nest,
-    config.github && github,
-    garbageCollect);
-
-  let extractedComments = _.flatMap(inputs, function (sourceFile) {
+  var parseFn = config.polyglot ? polyglot : parseJavaScript;
+  var buildPipeline;
+  let extractedComments = _.flatMap(inputs, function(sourceFile) {
     if (!sourceFile.source) {
       sourceFile.source = fs.readFileSync(sourceFile.file, 'utf8');
     }
 
+    buildPipeline = pipeline(
+      inferName,
+      inferAccess(config.inferPrivate),
+      inferAugments,
+      inferKind,
+      inferParams,
+      inferProperties,
+      inferReturn,
+      inferMembership(),
+      inferType,
+      inferSourceCode(sourceFile.source, config.s), // config.s == source
+      nest,
+      config.github && github,
+      garbageCollect
+    );
+
     return parseFn(sourceFile, config).map(buildPipeline);
   }).filter(Boolean);
 
-  return filterAccess(config.access,
-    hierarchy(
-      sort(extractedComments, config)));
+  // console.log(`extractedComments: ${extractedComments}`);
+
+  return filterAccess(
+    config.access,
+    hierarchy(sort(extractedComments, config))
+  );
 }
 
 function lintInternal(inputsAndConfig) {
   let inputs = inputsAndConfig.inputs;
   let config = inputsAndConfig.config;
 
-  let parseFn = (config.polyglot) ? polyglot : parseJavaScript;
+  let parseFn = config.polyglot ? polyglot : parseJavaScript;
 
   let lintPipeline = pipeline(
     lintComments,
@@ -137,7 +142,8 @@ function lintInternal(inputsAndConfig) {
     inferReturn,
     inferMembership(),
     inferType,
-    nest);
+    nest
+  );
 
   let extractedComments = _.flatMap(inputs, sourceFile => {
     if (!sourceFile.source) {
@@ -183,8 +189,7 @@ function lintInternal(inputsAndConfig) {
  *   }
  * });
  */
-let lint = (indexes, args) => configure(indexes, args)
-  .then(lintInternal);
+let lint = (indexes, args) => configure(indexes, args).then(lintInternal);
 
 /**
  * Generate JavaScript documentation as a list of parsed JSDoc
@@ -227,8 +232,7 @@ let lint = (indexes, args) => configure(indexes, args)
  *   // any other kind of code data.
  * });
  */
-let build = (indexes, args) => configure(indexes, args)
-  .then(buildInternal);
+let build = (indexes, args) => configure(indexes, args).then(buildInternal);
 
 /**
  * Documentation's formats are modular methods that take comments
@@ -240,9 +244,8 @@ let build = (indexes, args) => configure(indexes, args)
 var formats = {
   html: require('./lib/output/html'),
   md: require('./lib/output/markdown'),
-  remark: (comments/*: Array<Comment> */, config/*: DocumentationConfig */) =>
-    markdownAST(comments, config)
-      .then(res => JSON.stringify(res, null, 2)),
+  remark: (comments /*: Array<Comment> */, config /*: DocumentationConfig */) =>
+    markdownAST(comments, config).then(res => JSON.stringify(res, null, 2)),
   json: require('./lib/output/json')
 };
 

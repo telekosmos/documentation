@@ -127,6 +127,14 @@ table {
   line-height: 30px;
 }
 
+.sourcecode {
+  padding-left: 1rem;
+}
+
+.private-member {
+  color: #ed225d;
+}
+
 .quiet {
   opacity: 0.7;
 }

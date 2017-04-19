@@ -95,6 +95,8 @@
     "self-lint": "node ./bin/documentation.js lint",
     "test": "are-we-flow-yet lib && flow check && npm run self-lint && npm run test-tap",
     "test-tap": "tap -t 120 --coverage --nyc-arg=--cache test/*.js test/lib test/streams"
+    "flow-checks": "are-we-flow-yet lib && flow check",
+    "lint-checks": "npm run lint && npm run self-lint"
   },
   "config": {
     "commitizen": {
