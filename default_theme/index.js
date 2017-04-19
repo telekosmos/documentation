@@ -9,7 +9,7 @@ var fs = require('fs'),
   GithubSlugger = require('github-slugger'),
   createFormatters = require('../').util.createFormatters,
   LinkerStack = require('../').util.LinkerStack,
-  hljs = require('highlight.js');
+hljs = require('highlight.js');
 
 module.exports = function (comments/*: Array<Comment> */, config/*: DocumentationConfig */) {
 
@@ -71,7 +71,7 @@ module.exports = function (comments/*: Array<Comment> */, config/*: Documentatio
       }
     }
   };
-  
+
   sharedImports.imports.renderSectionList =  _.template(fs.readFileSync(path.join(__dirname, 'section_list._'), 'utf8'), sharedImports);
   sharedImports.imports.renderSection = _.template(fs.readFileSync(path.join(__dirname, 'section._'), 'utf8'), sharedImports);
   sharedImports.imports.renderNote = _.template(fs.readFileSync(path.join(__dirname, 'note._'), 'utf8'), sharedImports);

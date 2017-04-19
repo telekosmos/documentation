@@ -161,7 +161,7 @@
     </div>
   </div>
   <div class="clearfix display-none toggle-target" style="padding-left:2rem">
-    <pre class='p1 overflow-auto round fill-light'><%= highlight(section.context.blockSource) %></pre>
+    <pre class='p1 overflow-auto round hljs'><%= highlight(section.context.blockSource) %></pre>
   </div>
   <% }%>
 
