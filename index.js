@@ -108,7 +108,7 @@ function buildInternal(inputsAndConfig) {
       inferReturn,
       inferMembership(),
       inferType,
-      inferSourceCode(sourceFile.source, config.s), // config.s == source
+      inferSourceCode(sourceFile.source, config.s || config.source), // config.s == source
       nest,
       config.github && github,
       garbageCollect

@@ -4,6 +4,8 @@
 .gitattributes
 .gitignore
 .nyc_output
+.idea
 circle.yml
 coverage
 test
+*.log
