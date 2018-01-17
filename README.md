@@ -17,6 +17,8 @@ Using [babel](https://babeljs.io/), we have support for a wide range
 of [ES6 & ES7 features](https://github.com/lukehoban/es6features), as well
 as [Flow](http://flowtype.org/) type annotations.
 
+> Note this is a fork of the main repo and provides, in branch `feat/sourcecode`, the chance to __display the very source code__ along with the generated documentation.
+
 **Powerful inference**
 
 By statically analyzing your JavaScript code, documentation.js can write
