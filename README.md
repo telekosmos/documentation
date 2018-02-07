@@ -19,6 +19,20 @@
 * Integrates with GitHub to link directly from documentation to the code it refers to.
 * Customizable output: HTML, JSON, Markdown, and more
 
+> __Mind__ this is a fork of [documentation](https://github.com/documentationjs/documentation) and it is many commits behind... but you will have the change of getting your code embedded into your documentation using this fork via the -s option
+
+## (Very) quick start
+`git clone https://github.com/telekosmos/documentation.git && cd documentation`
+
+`npm install`
+
+In order to see how is the generated documentation along with the source code embedded:
+
+`./bin/documentation.js build test/test-sample.js -s -f html -o docs`
+
+The `docs` folder will be created automatically.
+
+
 ## Examples
 
 -   [HTML output with default template](http://documentation.js.org/html-example/)
