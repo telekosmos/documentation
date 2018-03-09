@@ -19,7 +19,7 @@
 * Integrates with GitHub to link directly from documentation to the code it refers to.
 * Customizable output: HTML, JSON, Markdown, and more
 
-> __Mind__ this is a fork of [documentation](https://github.com/documentationjs/documentation) and it is many commits behind... but you will have the chance of getting your (source) code embedded into your documentation using this fork via the -s option
+> __Mind__ this is a fork of [documentation](https://github.com/documentationjs/documentation) and it is many commits behind... but you will have the chance of getting your (source) code embedded into your documentation using this fork via the -s option. That feature is implemented in the [`feat/sourcecode`](https://github.com/telekosmos/documentation/tree/feat/sourcecode) branch
 
 ## (Very) quick start
 `git clone https://github.com/telekosmos/documentation.git && cd documentation`
